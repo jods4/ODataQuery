@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <DefaultNamespace>ODataQuery</DefaultNamespace>
+
+    <Version>0.1.0.0-pre</Version>
+    <Authors>jods4</Authors>
+    <RepositoryUrl>https://github.com/jods4/ODataQuery</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Pidgin" Version="2.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="1.0.0" />
+  </ItemGroup>
+
+</Project>
