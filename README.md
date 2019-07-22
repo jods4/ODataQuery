@@ -1,5 +1,5 @@
 # ODataQuery
-This package enables server-side filtering, sorting and pagination of any `IQueryable<T>` using OData syntax and without needing a model.
+This package enables server-side filtering, sorting and pagination of any `IQueryable<T>` using OData syntax and without needing an EDM model.
 This is achieved simply by adding `[ODataQueryable]` to any such API.
 
 ## How to use
