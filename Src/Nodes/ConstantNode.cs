@@ -30,6 +30,16 @@ namespace ODataQuery.Nodes
           return Enum.ToObject(type, Convert.ChangeType(Value, type.GetEnumUnderlyingType()));
       }
 
+      if (Value is DateTimeOffset dto && type == typeof(DateTime))
+      {
+        return dto.LocalDateTime;
+      }
+
+      if (Value is DateTime dt && type == typeof(DateTimeOffset))
+      {
+        return (DateTimeOffset)dt;
+      }
+
       return Convert.ChangeType(Value, type);
     }
 

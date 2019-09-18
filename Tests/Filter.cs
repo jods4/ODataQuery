@@ -63,7 +63,10 @@ namespace ODataQuery.Tests
 
       new[] { "enum eq 'B'", Q(x => x.Enum == TestEnum.B), 2 },
       new[] { "enum eq 2", Q(x => x.Enum == TestEnum.C), 2 },
-      new[] { "enum in ('A', 0, 'B')", Q(x => x.Enum == TestEnum.B), 2},
+      new[] { "enum in ('A', 0, 'B')", Q(x => x.Enum == TestEnum.B), 2 },
+
+      new[] { "date gt 2019-01-01T00:00:00Z", Q(x => x.Date > DateTimeOffset.Parse("2019-01-01T00:00:00Z")), 2 },   // Implicit conversion of DateTimeOffset to DateTime
+      new[] { "datetz gt 2019-01-01T00:00:00", Q(x => x.DateTz > DateTime.Parse("2019-01-01T00:00:00")), 2 },       // Implicit conversion of DateTime to DateTimeOffset
     };
 
     [Theory]
