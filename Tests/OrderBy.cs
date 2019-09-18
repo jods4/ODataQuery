@@ -43,7 +43,7 @@ namespace ODataQuery.Tests
     private static object Q(ApplyOrder orderby) => (ApplyOrder)((IQueryable<TestData> source) => orderby(source));
 
     public static object[][] queries = new[] {
-      new[] { "text", Q(x => x.OrderBy(y => y.Text)) },
+      new[] { "name", Q(x => x.OrderBy(y => y.Name)) },
       new[] { "id,date", Q(x => x.OrderBy(y => y.Id).ThenBy(y => y.Date)) },
       new[] { "id,date desc", Q(x => x.OrderBy(y => y.Id).ThenByDescending(y => y.Date)) },
       new[] { "date desc,id", Q(x => x.OrderByDescending(y => y.Date).ThenBy(y => y.Id)) },

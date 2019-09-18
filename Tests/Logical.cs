@@ -15,7 +15,7 @@ namespace ODataQuery.Tests
     [InlineData("rate lt 100 and vip eq 1 or booked ne 1", "Or[And[Lt[Ident[rate],Const[100]],Eq[Ident[vip],Const[1]]],Ne[Ident[booked],Const[1]]]")]
     [InlineData("((rate lt 100) and (vip eq 1 or booked ne 1))", "And[Lt[Ident[rate],Const[100]],Or[Eq[Ident[vip],Const[1]],Ne[Ident[booked],Const[1]]]]")]
     [InlineData("today gt 2000-01-01", "Gt[Ident[today],Const[2000-01-01T00:00:00]]")]
-    [InlineData("not contains(text, 'abc') or text eq 'abc'", "Or[Not[Func[Contains,Ident[text],Const[abc]]],Eq[Ident[text],Const[abc]]]")]
+    [InlineData("not contains(name, 'abc') or name eq 'abc'", "Or[Not[Func[Contains,Ident[name],Const[abc]]],Eq[Ident[name],Const[abc]]]")]
     public void LogicalExpression(string input, string expected)
     {
       var result = Logical.LogicalExpr

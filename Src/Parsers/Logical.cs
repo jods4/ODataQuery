@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Pidgin;
 using Pidgin.Expression;
 using ODataQuery.Nodes;
@@ -39,9 +39,11 @@ namespace ODataQuery.Parsers
       );
 
     public static Parser<char, Func<Node, Node>> Not =
-      String("not")
-        .Before(RWS)
-        .WithResult<Func<Node, Node>>(x => new NotNode(x));
+      Try(    // Try -> amiguous with expressions that start with 'n'
+        String("not")    
+          .Before(RWS)      
+          .WithResult<Func<Node, Node>>(x => new NotNode(x))
+      );
 
     public static Parser<char, Func<Node, Node, Node>> Or =
       String("or")

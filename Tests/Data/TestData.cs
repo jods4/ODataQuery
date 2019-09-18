@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 
 namespace ODataQuery.Tests.Data
 {
@@ -9,7 +8,7 @@ namespace ODataQuery.Tests.Data
   {
     public int Id { get; }
     public decimal Dec {get; }
-    public string Text { get; }
+    public string Name { get; }
     public DateTime Date { get; }
     public DateTimeOffset DateTz { get; }
     public TestEnum Enum { get => (Id & 1) == 1 ? TestEnum.B : TestEnum.C; }
@@ -18,7 +17,7 @@ namespace ODataQuery.Tests.Data
     {
       Id = id;
       Dec = id + 0.25m;
-      Text = text;
+      Name = text;
       Date = DateTime.Parse(date);
       DateTz = Date;
     }

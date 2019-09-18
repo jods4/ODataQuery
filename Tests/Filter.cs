@@ -27,15 +27,15 @@ namespace ODataQuery.Tests
       new[] { "id lt 5 and not id eq 1", Q(x => x.Id < 5 && !(x.Id == 1)), 2 },
       new[] { "dec lt 1.5", Q(x => x.Dec < 1.5m), 1 },
 
-      new[] { "contains(text, 'o')", Q(x => x.Text.Contains("o")), 2 },
-      new[] { "startswith(text, 'F') eq false", Q(x => x.Text.StartsWith("F") == false), 2 },
-      new[] { "not endswith(text, 'e')", Q(x => !x.Text.EndsWith("e")), 2 },
+      new[] { "contains(name, 'o')", Q(x => x.Name.Contains("o")), 2 },
+      new[] { "startswith(name, 'F') eq false", Q(x => x.Name.StartsWith("F") == false), 2 },
+      new[] { "not endswith(name, 'e')", Q(x => !x.Name.EndsWith("e")), 2 },
 
-      new[] { "indexof(text, 'iv') eq 1", Q(x => x.Text.IndexOf("iv") == 1), 1 },
-      new[] { "length(text) eq 3", Q(x => x.Text.Length == 3), 2 },
-      new[] { "substring(text, 1) eq 'ne'", Q(x => x.Text.Substring(1) == "ne"), 1 },
-      new[] { "substring(text, 2, 1) eq 'o'", Q(x => x.Text.Substring(2, 1) == "o"), 1 },
-      new[] { "concat('+', text) eq '+One'", Q(x => string.Concat("+", x.Text) == "+One"), 1 },
+      new[] { "indexof(name, 'iv') eq 1", Q(x => x.Name.IndexOf("iv") == 1), 1 },
+      new[] { "length(name) eq 3", Q(x => x.Name.Length == 3), 2 },
+      new[] { "substring(name, 1) eq 'ne'", Q(x => x.Name.Substring(1) == "ne"), 1 },
+      new[] { "substring(name, 2, 1) eq 'o'", Q(x => x.Name.Substring(2, 1) == "o"), 1 },
+      new[] { "concat('+', name) eq '+One'", Q(x => string.Concat("+", x.Name) == "+One"), 1 },
 
       new[] { "year(date) eq 2019", Q(x => x.Date.Year == 2019), 2 },
       new[] { "month(date) eq 7", Q(x => x.Date.Month == 7), 2 },
@@ -57,7 +57,7 @@ namespace ODataQuery.Tests
       new[] { "floor(dec) le 2", Q(x => Math.Floor(x.Dec) <= 2), 2 },
       new[] { "round(dec) eq 4", Q(x => Math.Round(x.Dec) == 4), 1 },
 
-      new[] { "text in ('One', 'Two', 'Three')", Q(x => testInString.Contains(x.Text)), 2 },
+      new[] { "name in ('One', 'Two', 'Three')", Q(x => testInString.Contains(x.Name)), 2 },
       new[] { "id in (1, 2, 3)", Q(x => testInInt.Contains(x.Id)), 2 },
       new[] { "id in ()", Q(x => false), 0 }, // OData grammar does not support
 
