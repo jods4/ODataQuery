@@ -50,11 +50,12 @@ namespace ODataQuery.Parsers
         Digit.RepeatString(2).Before(Char('-')),
         Digit.RepeatString(2))
       .Then(
-        Map((_, h, m, s) => new TimeSpan(int.Parse(h), int.Parse(m), int.Parse(s)),
+        Map((_, h, m, s, f) => new TimeSpan(0, int.Parse(h), int.Parse(m), int.Parse(s), !f.HasValue ? 0 : int.Parse(f.Value.PadRight(3, '0').Substring(0, 3))),
           Char('T'),
           Digit.RepeatString(2).Before(Char(':')),
           Digit.RepeatString(2).Before(Char(':')),
-          Digit.RepeatString(2))
+          Digit.RepeatString(2),
+          Char('.').Then(Digit.AtLeastOnceString()).Optional())
         .Optional(),
         (dt, ts) => ts.HasValue ? dt.Add(ts.Value) : dt
       )

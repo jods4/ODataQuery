@@ -67,6 +67,7 @@ namespace ODataQuery.Tests
     [InlineData("2017-04-27T13:52:18Z")]
     [InlineData("2017-04-27T13:52:18+0500")]
     [InlineData("2017-04-27T13:52:18-0230")]
+    [InlineData("2017-04-27T13:52:19.12Z")]
     public void DateTimeOffsetLiteral(string input)
     {
       var result = (ConstantNode)Parse(Literals.DateLiteral, input);
