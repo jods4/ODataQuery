@@ -5,7 +5,7 @@
     <DefaultNamespace>ODataQuery</DefaultNamespace>
 
     <PackageId>ODataQuery</PackageId>
-    <Version>0.2.0.0-pre</Version>
+    <Version>0.3.0.0-pre</Version>
     <Description>Enables server-side filtering, sorting and pagination of any IQueryable&lt;T&gt; using OData syntax and without needing an EDM model.</Description>
     <Authors>jods4</Authors>
     <RepositoryUrl>https://github.com/jods4/ODataQuery</RepositoryUrl>
@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Pidgin" Version="2.1.0" />
+    <PackageReference Include="Pidgin" Version="2.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
   </ItemGroup>
 
