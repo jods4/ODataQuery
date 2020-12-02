@@ -18,10 +18,16 @@ namespace ODataQuery.Nodes
 
     public override Expression ToExpression(Expression instance) => Expression.Constant(Value);
 
-    public override Expression ToExpression(Expression instance, Type type) => Expression.Constant(As(type));
+    public override Expression ToExpression(Expression instance, Type type) => Expression.Constant(As(type), type);
 
     public object As(Type type)
     {
+      if (type.IsNullable(out var innerType))
+      {
+        if (Value == null) return null;
+        type = innerType;
+      }
+
       if (type.IsEnum)
       {
         if (Value is string s)

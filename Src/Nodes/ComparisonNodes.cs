@@ -27,6 +27,15 @@ namespace ODataQuery.Nodes
       if (Left is ConstantNode c1) left = c1.ToExpression(instance, right.Type);
       else if (Right is ConstantNode c2) right = c2.ToExpression(instance, left.Type);
 
+      // If one side is nullable, but the other is not, introduce a conversion
+      // An expression tree like `int? == int` does not compile
+      var nullableLeft = left.Type.IsNullable(out _);
+      var nullableRight = right.Type.IsNullable(out _);
+      if (nullableLeft && !nullableRight)
+        right = Expression.Convert(right, left.Type);
+      else if (nullableRight && !nullableLeft)
+        left = Expression.Convert(left, right.Type);
+
       switch (Comparator)
       {
         case Comparator.Eq:
