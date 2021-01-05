@@ -19,34 +19,40 @@ namespace ODataQuery
       count = -1;
       var result = source;
 
-      var filter = query.GetSystemOption("$filter");
+      var filter = query.GetODataOption("$filter");
       if (filter != null)
         result = result.ODataFilter(filter);
 
-      if (performCount && query.GetSystemOption("$count") == "true")
+      if (performCount && query.GetODataOption<bool>("$count"))
         count = result.Count();
 
-      var orderby = query.GetSystemOption("$orderby");
+      var orderby = query.GetODataOption("$orderby");
       if (orderby != null)
         result = result.ODataOrderBy(orderby);
 
-      var skip = query.GetSystemOption("$skip");
-      if (skip != null)
-        result = result.Skip(int.Parse(skip));
+      var skip = query.GetODataOption<int>("$skip");
+      if (skip > 0)
+        result = result.Skip(skip);
 
-      var take = query.GetSystemOption("$take");
-      if (take != null)
-        result = result.Take(int.Parse(take));
+      var take = query.GetODataOption<int>("$take");
+      if (take > 0)
+        result = result.Take(take);
 
       return result;
     }
 
-    private static string GetSystemOption(this IQueryCollection query, string option)
+    public static string GetODataOption(this IQueryCollection query, string option)
     {
       var result = query[option];
       if (result.Count > 1)
         throw new InvalidOperationException($"Query contains {option} more than once.");
       return result.Count == 1 ? result[0] : null;
+    }
+
+    public static T GetODataOption<T>(this IQueryCollection query, string option)
+    {
+      var raw = GetODataOption(query, option);
+      return raw == null ? default : (T)Convert.ChangeType(raw, typeof(T));
     }
 
     public static IQueryable<T> ODataFilter<T>(this IQueryable<T> source, string filter)

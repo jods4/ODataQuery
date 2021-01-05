@@ -9,22 +9,21 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace ODataQuery
 {
   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-  public sealed class ODataQueryableAttribute : ResultFilterAttribute
+  public abstract class IQueryableResultFilterAttribute : ResultFilterAttribute
   {
     public override void OnResultExecuting(ResultExecutingContext context)
     {
-      // First check if we have a result and if all is good
-      var result = context.Result as ObjectResult;
-      if (result?.Value == null ||                              // Do we even have a value?
-          !(result.Value is IQueryable) ||                      // Quick bail-out as IQueryable<T> implements IQueryable
-          result.StatusCode < 200 || result.StatusCode >= 300)  // Only HTTP 2xx range means success
+      // First check if we have a result and if all is good      
+      if (context.Result is not ObjectResult result ||  
+          result.Value is not IQueryable ||             // Quick bail-out as IQueryable<T> implements IQueryable
+          result.StatusCode is not (>= 200 and < 300))  // Only HTTP 2xx range means success
         return;
 
       var type = FindIQueryableOf(result.Value);
       if (type == null) return; // Might be IQueryable but not IQueryable<T>
 
       var method = applyODataMethod.MakeGenericMethod(type);
-      result.Value = method.Invoke(null, new object[] { result.Value, context.HttpContext.Request.Query });
+      result.Value = method.Invoke(this, new[] { result.Value, context.HttpContext.Request.Query });
     }
 
     private Type FindIQueryableOf(object target)
@@ -38,9 +37,15 @@ namespace ODataQuery
       return null;
     }
 
-    private static readonly MethodInfo applyODataMethod = typeof(ODataQueryableAttribute).GetMethod(nameof(ApplyOData), BindingFlags.NonPublic | BindingFlags.Static);
+    private static readonly MethodInfo applyODataMethod = typeof(ODataQueryableAttribute).GetMethod(nameof(TransformResult), BindingFlags.NonPublic);
 
-    private static object ApplyOData<T>(IQueryable<T> source, IQueryCollection query)
+    protected abstract object TransformResult<T>(IQueryable<T> source, IQueryCollection query);
+
+  }
+
+  public sealed class ODataQueryableAttribute : IQueryableResultFilterAttribute
+  {
+    protected override object TransformResult<T>(IQueryable<T> source, IQueryCollection query)
     {
       var value = source.OData(query, out var count);
       return count < 0 ?
