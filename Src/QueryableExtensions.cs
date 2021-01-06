@@ -86,7 +86,7 @@ namespace ODataQuery
         invokeParams[2] = /*first:*/false;
       }
 
-      return (IQueryable<T>)orderedSource ?? source;
+      return orderedSource ?? source;
     }
 
     private static MethodInfo applyMethod = typeof(QueryableExtensions).GetMethod(nameof(ApplyOrderBy), BindingFlags.NonPublic | BindingFlags.Static);
@@ -101,5 +101,19 @@ namespace ODataQuery
         return asc ? orderedSource.ThenBy(lambda) : orderedSource.ThenByDescending(lambda);
       }
     }
+
+    public static IQueryable FlatSelect<T>(this IQueryable<T> source, string select)
+    {
+      // Returns an array of a single property (flatten select)
+      var property = Literals.Identifier.ParseOrThrow(select);
+      var parameter = Expression.Parameter(typeof(T));
+      var body = property.ToExpression(parameter);
+      var lambda = Expression.Lambda(body, parameter);
+      return (IQueryable)selectMethod.MakeGenericMethod(typeof(T), lambda.ReturnType).Invoke(null, new object[] { source, lambda });
+    }
+
+    private static MethodInfo selectMethod = typeof(QueryableExtensions).GetMethod(nameof(ApplySelect), BindingFlags.NonPublic | BindingFlags.Static);
+
+    private static IQueryable ApplySelect<T, R>(IQueryable<T> source, Expression<Func<T, R>> selector) => source.Select(selector);
   }
 }

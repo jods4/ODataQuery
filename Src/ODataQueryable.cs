@@ -9,14 +9,14 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace ODataQuery
 {
   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-  public abstract class IQueryableResultFilterAttribute : ResultFilterAttribute
+  public abstract class QueryableResultFilterAttribute : ResultFilterAttribute
   {
     public override void OnResultExecuting(ResultExecutingContext context)
     {
       // First check if we have a result and if all is good      
       if (context.Result is not ObjectResult result ||  
           result.Value is not IQueryable ||             // Quick bail-out as IQueryable<T> implements IQueryable
-          result.StatusCode is not (>= 200 and < 300))  // Only HTTP 2xx range means success
+          result.StatusCode is (< 200 or >= 300))       // Only HTTP 2xx range means success, Caution: null is possible (means 200 by default)
         return;
 
       var type = FindIQueryableOf(result.Value);
@@ -37,13 +37,12 @@ namespace ODataQuery
       return null;
     }
 
-    private static readonly MethodInfo applyODataMethod = typeof(ODataQueryableAttribute).GetMethod(nameof(TransformResult), BindingFlags.NonPublic);
+    private static readonly MethodInfo applyODataMethod = typeof(QueryableResultFilterAttribute).GetMethod(nameof(TransformResult), BindingFlags.Instance | BindingFlags.NonPublic);
 
     protected abstract object TransformResult<T>(IQueryable<T> source, IQueryCollection query);
-
   }
 
-  public sealed class ODataQueryableAttribute : IQueryableResultFilterAttribute
+  public sealed class ODataQueryableAttribute : QueryableResultFilterAttribute
   {
     protected override object TransformResult<T>(IQueryable<T> source, IQueryCollection query)
     {
