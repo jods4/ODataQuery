@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## 1.0.0 - 2021-08-03
 ### Added
 - Bind `$search` to a `search` action parameter
+- `$select` to pick a subset of identifiers from full object, returns an `IDictionary<string, object>` meant for serialization.
 
 ## 0.5.0 - 2021-01-06
 ### Added

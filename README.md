@@ -53,7 +53,7 @@ The goal of this project is to enable easy server-side processing of datagrids, 
 
 Currently it has the following limitations:
 - There is no routing, only query string processing.
-- Not all system options are supported, only: `$filter`, `$search`, `$orderby`, `$skip`, `$take`, and `$count`.
+- Not all system options are supported, only: `$filter`, `$search`, `$orderby`, `$skip`, `$take`, `$select` and `$count`.
 - Only a subset of the full OData 4.0.1 is supported, see below for detailed support.
 - Error reporting is bad.
 
@@ -172,6 +172,11 @@ Sorting is a comma-separated list of expressions, optionnally followed by keywor
 It is applied as `OrderBy`, `ThenBy`, respectively `OrderByDescending`, `ThenByDescending`.
 
 **Note:** OData grammar doesn't allow spaces before or after commas in `$orderby`, neither does this library. So `$orderby=name, id` will throw.
+
+## $select
+Projecting only supports a list of plain identifiers.
+
+It is applied as a `Select` that returns a lightweight `IDictionary<string, object>` that is meant to be serialized (it is not fully functional and most methods throw `NotImplementedException`).
 
 ## $count
 If `$count=true` is in the query string, the response will have an additional `@odata.count` property set to the count of results just after applying filter, i.e. _before_ applying `$take`, `$skip`, and `$orderby`.

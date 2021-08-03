@@ -55,7 +55,7 @@ namespace ODataQuery
   {
     protected override object TransformResult<T>(IQueryable<T> source, IQueryCollection query)
     {
-      var value = source.OData(query, out var count);
+      var value = source.ODataSelect(query, out var count);
       return count < 0 ?
         new SortedList<string, object> { ["value"] = value } :
         new SortedList<string, object> { ["@odata.count"] = count, ["value"] = value };

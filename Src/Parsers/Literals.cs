@@ -10,9 +10,9 @@ namespace ODataQuery.Parsers
   static class Literals
   {
     // Required Whitespace
-    public static Parser<char, Unit> RWS = Char(' ').SkipAtLeastOnce();
+    public static readonly Parser<char, Unit> RWS = Char(' ').SkipAtLeastOnce();
     // Bad Whitespace
-    public static Parser<char, Unit> BWS = Char(' ').SkipMany();
+    public static readonly Parser<char, Unit> BWS = Char(' ').SkipMany();
 
     public static Parser<char, T> BetweenParen<T>(this Parser<char, T> x) =>
       x.Between(
@@ -20,7 +20,7 @@ namespace ODataQuery.Parsers
         BWS.Before(Char(')'))
       );
 
-    public static Parser<char, Node> Identifier =
+    public static readonly Parser<char, Node> Identifier =
       Token(c => ((uint)c - 'a') < 26
               || ((uint)c - 'A') < 26
               || c == '_')
@@ -30,21 +30,21 @@ namespace ODataQuery.Parsers
                     || c == '_').ManyString(),
             (first, rest) => (Node)new IdentifierNode(first + rest));
 
-    public static Parser<char, Node> StringLiteral =
+    public static readonly Parser<char, Node> StringLiteral =
       AnyCharExcept('\'')
         .Or(Try(String("''").WithResult('\'')))
         .ManyString()
         .Between(Char('\''))
         .Select<Node>(s => new ConstantNode(s));
 
-    public static Parser<char, Node> NumberLiteral =
+    public static readonly Parser<char, Node> NumberLiteral =
       Map((s, m, f) => (Node)new ConstantNode(decimal.Parse((s.HasValue ? "-" : "") + m + (f.HasValue ? "." + f.Value : ""))),
         Char('-').Optional(),
         Digit.AtLeastOnceString(),
         Char('.').Then(Digit.AtLeastOnceString()).Optional()
       );
 
-    public static Parser<char, Node> DateLiteral =
+    public static readonly Parser<char, Node> DateLiteral =
       Map((y, m, d) => new DateTime(int.Parse(y), int.Parse(m), int.Parse(d)),
         Digit.RepeatString(4).Before(Char('-')),
         Digit.RepeatString(2).Before(Char('-')),
@@ -69,14 +69,14 @@ namespace ODataQuery.Parsers
       )
       .Select<Node>(d => new ConstantNode(d));
 
-    public static Parser<char, Node> KeywordLiteral =
+    public static readonly Parser<char, Node> KeywordLiteral =
       OneOf(
         String("false").WithResult(ConstantNode.False),
         String("null").WithResult(ConstantNode.Null),
         String("true").WithResult(ConstantNode.True)
       );
 
-    public static Parser<char, Node> Constant =
+    public static readonly Parser<char, Node> Constant =
       OneOf(StringLiteral,
             Try(DateLiteral), // Try -> ambiguous with ints as both start with a digit
             NumberLiteral,

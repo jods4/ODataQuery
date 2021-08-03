@@ -18,14 +18,14 @@ namespace ODataQuery.Parsers
         .Assert(nodes => nodes.Count == argsCount)
         .Select(selector);
 
-    public static Parser<char, Node> BoolFunctionCall =
+    public static readonly Parser<char, Node> BoolFunctionCall =
       OneOf(
         Function("contains", 2, nodes => StringFunc.Contains(nodes[0], nodes[1])),
         Function("endswith", 2, nodes => StringFunc.EndsWith(nodes[0], nodes[1])),
         Function("startswith", 2, nodes => StringFunc.StartsWith(nodes[0], nodes[1]))
       );
 
-    public static Parser<char, Node> FunctionCall =
+    public static readonly Parser<char, Node> FunctionCall =
       OneOf(
         Try(BoolFunctionCall),
         Try(Function("ceiling", 1, nodes => NumberFunc.Ceiling(nodes[0]))),
@@ -48,7 +48,7 @@ namespace ODataQuery.Parsers
         Function("year", 1, nodes => DateFunc.Year(nodes[0]))
       );
 
-    public static Parser<char, Node> Expression =
+    public static readonly Parser<char, Node> Expression =
       OneOf(Try(FunctionCall),  // Try -> ambiguous with identifiers and true/false/null constants
             Try(Constant),      // Try -> ambiguous with true/false/null constants
             Identifier);

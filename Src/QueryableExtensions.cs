@@ -5,6 +5,8 @@ using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Pidgin;
 using ODataQuery.Parsers;
+using System.Collections.Generic;
+using ODataQuery.Nodes;
 
 namespace ODataQuery
 {
@@ -13,6 +15,14 @@ namespace ODataQuery
     public static IQueryable<T> OData<T>(this IQueryable<T> source, IQueryCollection query) => OData(source, query, out _, false);
 
     public static IQueryable<T> OData<T>(this IQueryable<T> source, IQueryCollection query, out int count) => OData(source, query, out count, true);
+
+    internal static IQueryable ODataSelect<T>(this IQueryable<T> source, IQueryCollection query, out int count)
+    {
+      var result = source.OData(query, out count, true);
+
+      var select = query.GetODataOption("$select");
+      return select != null ? result.ODataSelect(select) : result;
+    }
 
     private static IQueryable<T> OData<T>(this IQueryable<T> source, IQueryCollection query, out int count, bool performCount)
     {
@@ -115,5 +125,25 @@ namespace ODataQuery
     private static MethodInfo selectMethod = typeof(QueryableExtensions).GetMethod(nameof(ApplySelect), BindingFlags.NonPublic | BindingFlags.Static);
 
     private static IQueryable ApplySelect<T, R>(IQueryable<T> source, Expression<Func<T, R>> selector) => source.Select(selector);
+
+    private static readonly MethodInfo selectAddMethod = typeof(SelectDictionary).GetMethod(nameof(SelectDictionary.Add), new[] { typeof(string), typeof(object) });
+
+    private static IQueryable<IDictionary<string, object>> ODataSelect<T>(this IQueryable<T> source, string select)
+    {
+      var props = Select.Parser.ParseOrThrow(select).Cast<IdentifierNode>();
+      var parameter = Expression.Parameter(typeof(T));
+
+      var init = props.Select(p =>
+        Expression.ElementInit(
+          selectAddMethod,
+          Expression.Constant(p.Name),
+          Expression.Convert(p.ToExpression(parameter), typeof(object))));
+
+      var expr = Expression.Lambda<Func<T, IDictionary<string, object>>>(
+        Expression.ListInit(Expression.New(typeof(SelectDictionary)), init),
+        parameter);
+
+      return source.Select(expr);
+    }
   }
 }

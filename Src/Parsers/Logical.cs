@@ -11,7 +11,7 @@ namespace ODataQuery.Parsers
 {
   static class Logical
   {
-    public static Parser<char, Comparator> ComparisonOperator =
+    public static readonly Parser<char, Comparator> ComparisonOperator =
       OneOf(String("eq").WithResult(Comparator.Eq),
             String("ne").WithResult(Comparator.Ne),
             Char('g').Then(Char('t').WithResult(Comparator.Gt)
@@ -20,7 +20,7 @@ namespace ODataQuery.Parsers
                        .Or(Char('e').WithResult(Comparator.Le)))
             );
 
-    public static Parser<char, Node> Comparison =
+    public static readonly Parser<char, Node> Comparison =
       Map(
         (x, op, y) => (Node)new ComparisonNode(op, x, y),
         Expression,
@@ -28,7 +28,7 @@ namespace ODataQuery.Parsers
         Expression
       );
 
-    public static Parser<char, Node> In =
+    public static readonly Parser<char, Node> In =
       Map(
         (e, list) => (Node)new InNode(e, list),
         Expression
@@ -38,24 +38,24 @@ namespace ODataQuery.Parsers
           .BetweenParen()
       );
 
-    public static Parser<char, Func<Node, Node>> Not =
+    public static readonly Parser<char, Func<Node, Node>> Not =
       Try(    // Try -> amiguous with expressions that start with 'n'
         String("not")    
           .Before(RWS)      
           .WithResult<Func<Node, Node>>(x => new NotNode(x))
       );
 
-    public static Parser<char, Func<Node, Node, Node>> Or =
+    public static readonly Parser<char, Func<Node, Node, Node>> Or =
       String("or")
         .Between(RWS)
         .WithResult<Func<Node, Node, Node>>((x, y) => new LogicalNode(LogicOperator.Or, x, y));
 
-    public static Parser<char, Func<Node, Node, Node>> And =
+    public static readonly Parser<char, Func<Node, Node, Node>> And =
       String("and")
         .Between(RWS)
         .WithResult<Func<Node, Node, Node>>((x, y) => new LogicalNode(LogicOperator.And, x, y));
 
-    public static Parser<char, Node> LogicalExpr =
+    public static readonly Parser<char, Node> LogicalExpr =
       ExpressionParser.Build(
         x => OneOf(
           x.BetweenParen(),
