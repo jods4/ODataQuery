@@ -53,7 +53,7 @@ The goal of this project is to enable easy server-side processing of datagrids, 
 
 Currently it has the following limitations:
 - There is no routing, only query string processing.
-- Not all system options are supported, only: `$filter`, `$orderby`, `$skip`, `$take`, and `$count`.
+- Not all system options are supported, only: `$filter`, `$search`, `$orderby`, `$skip`, `$take`, and `$count`.
 - Only a subset of the full OData 4.0.1 is supported, see below for detailed support.
 - Error reporting is bad.
 
@@ -160,6 +160,11 @@ Geo function:
 Filter must evaluate to any boolean expression and is applied as `Where`.
 
 Collection predicates such as `any` and `all` are **not** supported, neither are paths to sub-properties such as `Address/City`.
+
+## $search
+The semantics of what search does is up to the application: which fields? case-sensitive? starts, contains or exact match?
+
+For this reason, the attribute `ODataQueryable` simply binds a `$search` query string to a `search` parameter (if any), so that you can apply the search yourself.
 
 ## $orderby
 Sorting is a comma-separated list of expressions, optionnally followed by keywords `asc` and `desc`.

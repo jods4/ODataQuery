@@ -9,8 +9,17 @@ using Microsoft.AspNetCore.Mvc.Filters;
 namespace ODataQuery
 {
   [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-  public abstract class QueryableResultFilterAttribute : ResultFilterAttribute
+  public abstract class QueryableResultFilterAttribute : ResultFilterAttribute, IActionFilter
   {
+    public void OnActionExecuting(ActionExecutingContext context)
+    {
+      if (context.HttpContext.Request.Query.TryGetValue("$search", out var values))
+        context.ActionArguments["search"] = values.First();
+    }
+
+    public void OnActionExecuted(ActionExecutedContext context)
+    { }
+
     public override void OnResultExecuting(ResultExecutingContext context)
     {
       // First check if we have a result and if all is good      
