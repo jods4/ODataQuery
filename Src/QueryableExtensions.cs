@@ -44,9 +44,12 @@ namespace ODataQuery
       if (skip > 0)
         result = result.Skip(skip);
 
-      var take = query.GetODataOption<int>("$take");
-      if (take > 0)
-        result = result.Take(take);
+      var top = query.GetODataOption<int>("$top");
+      // $take is a synonym of $top for backward compatibility,
+      // as this package incorrectly used $take until v1.1.
+      if (top == 0) top = query.GetODataOption<int>("$take");
+      if (top > 0)
+        result = result.Take(top);
 
       return result;
     }

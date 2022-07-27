@@ -53,7 +53,7 @@ The goal of this project is to enable easy server-side processing of datagrids, 
 
 Currently it has the following limitations:
 - There is no routing, only query string processing.
-- Not all system options are supported, only: `$filter`, `$search`, `$orderby`, `$skip`, `$take`, `$select` and `$count`.
+- Not all system options are supported, only: `$filter`, `$search`, `$orderby`, `$skip`, `$top`, `$select` and `$count`.
 - Only a subset of the full OData 4.0.1 is supported, see below for detailed support.
 - Error reporting is bad.
 
@@ -97,7 +97,7 @@ IQueryable<T> result = source.ODataFilter("amount gt 1000")
 This library follows OData conventions, with the following extensions:
 
 - `DateTime` is supported (OData only supports `DateTimeOffset`).
-Literals with a timezone parse as `DateTime`, literals with a timezone as `DateTimeOffset`.
+Literals without a timezone parse as `DateTime`, literals with a timezone as `DateTimeOffset`.
 
 - `in` operator can have an empty list on right hand side: `x in ()`.
 This is forbidden by OData grammar but it is accepted by this library and evaluates to `false`.
@@ -105,7 +105,7 @@ This is forbidden by OData grammar but it is accepted by this library and evalua
 ## Supported grammar
 This library implements a subset of OData 4.0.1.
 
-Only `$filter`, `$orderby`, `$take`, `$skip` and `$count` are supported.
+Only `$filter`, `$orderby`, `$top`, `$skip` and `$count` are supported.
 
 ### Types and Literals
 Supported: Numeric types, `DateTime` and `DateTimeOffset`, `bool`, `string`, enums.
@@ -179,11 +179,14 @@ Projecting only supports a list of plain identifiers.
 It is applied as a `Select` that returns a lightweight `IDictionary<string, object>` that is meant to be serialized (it is not fully functional and most methods throw `NotImplementedException`).
 
 ## $count
-If `$count=true` is in the query string, the response will have an additional `@odata.count` property set to the count of results just after applying filter, i.e. _before_ applying `$take`, `$skip`, and `$orderby`.
+If `$count=true` is in the query string, the response will have an additional `@odata.count` property set to the count of results just after applying filter, i.e. _before_ applying `$top`, `$skip`, and `$orderby`.
 
 It is applied as a call to `Count` (so 2 queries are executed).
 
 **Note:** only the OData 4.0 `$count` option is supported. Previously it was `$inline-count=allpages`, which is **not** supported by this library.
 
-## $take and $skip
+## $top and $skip
 Both supported as plain integers, applied as `Take` and `Skip` calls.
+
+**Note:** before v1.1 this package looked for `$take` instead of `$top` which is not the OData standard.
+For backward compatibility, `$take` is still accepted as a synonym of `$top` but it's usage is discouraged.
