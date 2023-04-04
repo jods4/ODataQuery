@@ -131,7 +131,7 @@ namespace ODataQuery
 
     private static readonly MethodInfo selectAddMethod = typeof(SelectDictionary).GetMethod(nameof(SelectDictionary.Add), new[] { typeof(string), typeof(object) });
 
-    private static IQueryable<IDictionary<string, object>> ODataSelect<T>(this IQueryable<T> source, string select)
+    internal static IQueryable<IDictionary<string, object>> ODataSelect<T>(this IQueryable<T> source, string select)
     {
       var props = Select.Parser.ParseOrThrow(select).Cast<IdentifierNode>();
       var parameter = Expression.Parameter(typeof(T));

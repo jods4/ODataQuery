@@ -37,7 +37,7 @@ namespace ODataQuery.Tests
 
     [Theory]
     [InlineData("x nope")]
-    [InlineData("a,,b")]    
+    [InlineData("a,,b")]
     public void BadParse(string input) => Assert.Throws<ParseException>(() => Select.Parser.ParseOrThrow(input));
 
     [Fact]

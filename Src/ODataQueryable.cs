@@ -22,8 +22,8 @@ namespace ODataQuery
 
     public override void OnResultExecuting(ResultExecutingContext context)
     {
-      // First check if we have a result and if all is good      
-      if (context.Result is not ObjectResult result ||  
+      // First check if we have a result and if all is good
+      if (context.Result is not ObjectResult result ||
           result.Value is not IQueryable ||             // Quick bail-out as IQueryable<T> implements IQueryable
           result.StatusCode is (< 200 or >= 300))       // Only HTTP 2xx range means success, Caution: null is possible (means 200 by default)
         return;
