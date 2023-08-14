@@ -30,15 +30,13 @@ namespace ODataQuery
       var result = source;
 
       var filter = query.GetODataOption("$filter");
-      if (filter != null)
-        result = result.ODataFilter(filter);
+      result = result.ODataFilter(filter);
 
       if (performCount && query.GetODataOption<bool>("$count"))
         count = result.Count();
 
       var orderby = query.GetODataOption("$orderby");
-      if (orderby != null)
-        result = result.ODataOrderBy(orderby);
+      result = result.ODataOrderBy(orderby);
 
       var skip = query.GetODataOption<int>("$skip");
       if (skip > 0)
@@ -70,6 +68,8 @@ namespace ODataQuery
 
     public static IQueryable<T> ODataFilter<T>(this IQueryable<T> source, string filter)
     {
+      if (filter == null) return source;
+
       var node = ParseFilter(filter);
       var parameter = Expression.Parameter(typeof(T));
       var body = node.ToExpression(parameter);
@@ -84,6 +84,8 @@ namespace ODataQuery
 
     public static IQueryable<T> ODataOrderBy<T>(this IQueryable<T> source, string orderby)
     {
+      if (orderby == null) return source;
+
       var terms = OrderBy.Parser.ParseOrThrow(orderby);
       var parameter = Expression.Parameter(typeof(T));
 

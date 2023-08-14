@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.3.0 - 2023-08-14
+### Added
+- `ODataFilter` and `ODataOrderBy` don't throw anymore on null strings (they return the source unchanged).
+
+## 1.2.0 - 2023-04-04
+### Fixed
+- Target .net5.0 instead of netstandard and reference the framework in a way that doesn't cause problems in projects.
+
 ## 1.1.0 - 2022-07-27
 ### Fixed
 - Look for `$top` instead of `$take` in query options. If `$top` is absent, `$take` is looked for as well for backward compatibility with 1.0.0.
