@@ -4,6 +4,7 @@ using ODataQuery.Nodes;
 
 using static Pidgin.Parser;
 using static Pidgin.Parser<char>;
+using System.Globalization;
 
 namespace ODataQuery.Parsers
 {
@@ -38,7 +39,7 @@ namespace ODataQuery.Parsers
         .Select<Node>(s => new ConstantNode(s));
 
     public static readonly Parser<char, Node> NumberLiteral =
-      Map((s, m, f) => (Node)new ConstantNode(decimal.Parse((s.HasValue ? "-" : "") + m + (f.HasValue ? "." + f.Value : ""))),
+      Map((s, m, f) => (Node)new ConstantNode(decimal.Parse((s.HasValue ? "-" : "") + m + (f.HasValue ? "." + f.Value : ""), CultureInfo.InvariantCulture)),
         Char('-').Optional(),
         Digit.AtLeastOnceString(),
         Char('.').Then(Digit.AtLeastOnceString()).Optional()

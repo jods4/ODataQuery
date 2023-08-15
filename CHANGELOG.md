@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 1.4.0 - 2023-08-15
+### Fixed
+- Parsing of decimal separator was dependent on culture.
+
 ## 1.3.0 - 2023-08-14
 ### Added
 - `ODataFilter` and `ODataOrderBy` don't throw anymore on null strings (they return the source unchanged).
