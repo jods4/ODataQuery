@@ -10,6 +10,7 @@ namespace ODataQuery.Tests.Data
     public decimal Dec {get; }
     public string Name { get; }
     public DateTime Date { get; }
+    public DateOnly DateOnly { get; }
     public DateTimeOffset DateTz { get; }
     public TestEnum Enum { get => (Id & 1) == 1 ? TestEnum.B : TestEnum.C; }
 
@@ -19,6 +20,7 @@ namespace ODataQuery.Tests.Data
       Dec = id + 0.25m;
       Name = text;
       Date = DateTime.Parse(date);
+      DateOnly = DateOnly.Parse(date);
       DateTz = Date;
     }
   }

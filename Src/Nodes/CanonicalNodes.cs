@@ -42,31 +42,34 @@ namespace ODataQuery.Nodes
   {
     private static readonly MethodInfo year1 = typeof(DateTime).GetProperty(nameof(DateTime.Year)).GetGetMethod();
     private static readonly MethodInfo year2 = typeof(DateTimeOffset).GetProperty(nameof(DateTimeOffset.Year)).GetGetMethod();
-    public static DatePropertyNode Year(Node date) => new DatePropertyNode(year1, year2, date);
+    private static readonly MethodInfo year3 = typeof(DateOnly).GetProperty(nameof(DateOnly.Year)).GetGetMethod();
+    public static DatePropertyNode Year(Node date) => new DatePropertyNode(date, year1, year2, year3);
 
     private static readonly MethodInfo month1 = typeof(DateTime).GetProperty(nameof(DateTime.Month)).GetGetMethod();
     private static readonly MethodInfo month2 = typeof(DateTimeOffset).GetProperty(nameof(DateTimeOffset.Month)).GetGetMethod();
-    public static DatePropertyNode Month(Node date) => new DatePropertyNode(month1, month2, date);
+    private static readonly MethodInfo month3 = typeof(DateOnly).GetProperty(nameof(DateOnly.Month)).GetGetMethod();
+    public static DatePropertyNode Month(Node date) => new DatePropertyNode(date, month1, month2, month3);
 
     private static readonly MethodInfo day1 = typeof(DateTime).GetProperty(nameof(DateTime.Day)).GetGetMethod();
     private static readonly MethodInfo day2 = typeof(DateTimeOffset).GetProperty(nameof(DateTimeOffset.Day)).GetGetMethod();
-    public static DatePropertyNode Day(Node date) => new DatePropertyNode(day1, day2, date);
+    private static readonly MethodInfo day3 = typeof(DateOnly).GetProperty(nameof(DateOnly.Day)).GetGetMethod();
+    public static DatePropertyNode Day(Node date) => new DatePropertyNode(date, day1, day2, day3);
 
     private static readonly MethodInfo hour1 = typeof(DateTime).GetProperty(nameof(DateTime.Hour)).GetGetMethod();
     private static readonly MethodInfo hour2 = typeof(DateTimeOffset).GetProperty(nameof(DateTimeOffset.Hour)).GetGetMethod();
-    public static DatePropertyNode Hour(Node date) => new DatePropertyNode(hour1, hour2, date);
+    public static DatePropertyNode Hour(Node date) => new DatePropertyNode(date, hour1, hour2);
 
     private static readonly MethodInfo minute1 = typeof(DateTime).GetProperty(nameof(DateTime.Minute)).GetGetMethod();
     private static readonly MethodInfo minute2 = typeof(DateTimeOffset).GetProperty(nameof(DateTimeOffset.Minute)).GetGetMethod();
-    public static DatePropertyNode Minute(Node date) => new DatePropertyNode(minute1, minute2, date);
+    public static DatePropertyNode Minute(Node date) => new DatePropertyNode(date, minute1, minute2);
 
     private static readonly MethodInfo second1 = typeof(DateTime).GetProperty(nameof(DateTime.Second)).GetGetMethod();
     private static readonly MethodInfo second2 = typeof(DateTimeOffset).GetProperty(nameof(DateTimeOffset.Second)).GetGetMethod();
-    public static DatePropertyNode Second(Node date) => new DatePropertyNode(second1, second2, date);
+    public static DatePropertyNode Second(Node date) => new DatePropertyNode(date, second1, second2);
 
     private static readonly MethodInfo date1 = typeof(DateTime).GetProperty(nameof(DateTime.Date)).GetGetMethod();
     private static readonly MethodInfo date2 = typeof(DateTimeOffset).GetProperty(nameof(DateTimeOffset.Date)).GetGetMethod();
-    public static DatePropertyNode Date(Node date) => new DatePropertyNode(date1, date2, date);
+    public static DatePropertyNode Date(Node date) => new DatePropertyNode(date, date1, date2);
   }
 
   static class NumberFunc

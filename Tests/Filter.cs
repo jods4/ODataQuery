@@ -45,6 +45,10 @@ namespace ODataQuery.Tests
       new[] { "second(date) eq 10", Q(x => x.Date.Second == 10), 2 },
       new[] { "date(date) eq 2019-05-06", Q(x => x.Date.Date == new DateTime(2019, 5, 6)), 1 },
 
+      new[] { "year(dateonly) eq 2019", Q(x => x.Date.Year == 2019), 2 },
+      new[] { "month(dateonly) eq 7", Q(x => x.Date.Month == 7), 2 },
+      new[] { "day(dateonly) eq 20", Q(x => x.Date.Day == 20), 2 },
+
       new[] { "year(datetz) eq 2019", Q(x => x.DateTz.Year == 2019), 2 },
       new[] { "month(datetz) eq 7", Q(x => x.DateTz.Month == 7), 2 },
       new[] { "day(datetz) eq 20", Q(x => x.DateTz.Day == 20), 2 },
@@ -67,6 +71,7 @@ namespace ODataQuery.Tests
 
       new[] { "date gt 2019-01-01T00:00:00Z", Q(x => x.Date > DateTimeOffset.Parse("2019-01-01T00:00:00Z")), 2 },   // Implicit conversion of DateTimeOffset to DateTime
       new[] { "datetz gt 2019-01-01T00:00:00", Q(x => x.DateTz > DateTime.Parse("2019-01-01T00:00:00")), 2 },       // Implicit conversion of DateTime to DateTimeOffset
+      new[] { "dateOnly gt 2019-01-01", Q(x => x.DateOnly > DateOnly.Parse("2019-01-01")), 2 },                     // Implicit conversion of DateTime to DateTimeOffset}
     };
 
     [Theory]

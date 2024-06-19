@@ -41,9 +41,12 @@ namespace ODataQuery.Nodes
         return dto.LocalDateTime;
       }
 
-      if (Value is DateTime dt && type == typeof(DateTimeOffset))
+      if (Value is DateTime dt)
       {
-        return (DateTimeOffset)dt;
+        if (type == typeof(DateTimeOffset))
+          return (DateTimeOffset)dt;
+        if (type == typeof(DateOnly))
+          return DateOnly.FromDateTime(dt);
       }
 
       return Convert.ChangeType(Value, type);

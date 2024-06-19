@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2.0.0 - 2024-06-19
+### Breaking change
+- Lowest .net target is 6.0
+### Added
+- Support DateOnly model properties
+
 ## 1.4.0 - 2023-08-15
 ### Fixed
 - Parsing of decimal separator was dependent on culture.
