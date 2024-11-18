@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Generic;
-using Pidgin;
+using System.Linq;
 using ODataQuery.Nodes;
+using Pidgin;
 
 using static Pidgin.Parser;
 using static ODataQuery.Parsers.Literals;
@@ -17,6 +18,16 @@ namespace ODataQuery.Parsers
         .Select(nodes => nodes.AsList())
         .Assert(nodes => nodes.Count == argsCount)
         .Select(selector);
+
+    public static readonly Parser<char, Node> CustomFunction =
+      Identifier
+        .Then(Char('.'))
+        .Then(Identifier)
+        .MapWithInput((input, _) => ODataQueryableOptions.GlobalFunctions.TryGetValue(input.ToString(), out var fn) ? fn : null)
+        .Assert(fn => fn != null)
+        .Then(Rec(() => Expression.Separated(Char(',').Between(BWS))
+                                  .BetweenParen()),
+              (fn, nodes) => (Node)new FuncNode(fn, nodes.ToArray()));
 
     public static readonly Parser<char, Node> BoolFunctionCall =
       OneOf(
@@ -49,8 +60,9 @@ namespace ODataQuery.Parsers
       );
 
     public static readonly Parser<char, Node> Expression =
-      OneOf(Try(FunctionCall),  // Try -> ambiguous with identifiers and true/false/null constants
-            Try(Constant),      // Try -> ambiguous with true/false/null constants
+      OneOf(Try(FunctionCall),   // Try -> ambiguous with identifiers and true/false/null constants
+            Try(CustomFunction), // Try -> ambiguous with identifiers and true/false/null constants
+            Try(Constant),       // Try -> ambiguous with true/false/null constants
             Identifier);
   }
 }

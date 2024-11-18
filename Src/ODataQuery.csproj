@@ -6,17 +6,19 @@
     <DefaultNamespace>ODataQuery</DefaultNamespace>
 
     <PackageId>ODataQuery</PackageId>
-    <Version>2.0.0.0</Version>
+    <Version>2.1.0.0</Version>
     <Description>Enables server-side filtering, sorting and pagination of any IQueryable&lt;T&gt; using OData syntax and without needing an EDM model.</Description>
     <Authors>jods4</Authors>
     <RepositoryUrl>https://github.com/jods4/ODataQuery</RepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>OData;AspNet;WebApi;AspNetWebApi;Core</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Pidgin" Version="3.2.3" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <None Include="..\README.md" Pack="true" PackagePath="\"/>
   </ItemGroup>
 
 </Project>

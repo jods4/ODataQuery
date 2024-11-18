@@ -1,64 +1,82 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using ODataQuery.Nodes;
 
-namespace ODataQuery
+namespace ODataQuery;
+
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+public abstract class QueryableResultFilterAttribute : ResultFilterAttribute, IActionFilter
 {
-  [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-  public abstract class QueryableResultFilterAttribute : ResultFilterAttribute, IActionFilter
+  public void OnActionExecuting(ActionExecutingContext context)
   {
-    public void OnActionExecuting(ActionExecutingContext context)
-    {
-      if (context.HttpContext.Request.Query.TryGetValue("$search", out var values))
-        context.ActionArguments["search"] = values.First();
-    }
-
-    public void OnActionExecuted(ActionExecutedContext context)
-    { }
-
-    public override void OnResultExecuting(ResultExecutingContext context)
-    {
-      // First check if we have a result and if all is good
-      if (context.Result is not ObjectResult result ||
-          result.Value is not IQueryable ||             // Quick bail-out as IQueryable<T> implements IQueryable
-          result.StatusCode is (< 200 or >= 300))       // Only HTTP 2xx range means success, Caution: null is possible (means 200 by default)
-        return;
-
-      var type = FindIQueryableOf(result.Value);
-      if (type == null) return; // Might be IQueryable but not IQueryable<T>
-
-      var method = applyODataMethod.MakeGenericMethod(type);
-      result.Value = method.Invoke(this, new[] { result.Value, context.HttpContext.Request.Query });
-    }
-
-    private Type FindIQueryableOf(object target)
-    {
-      foreach (var interfaceType in target.GetType().GetInterfaces())
-      {
-        if (interfaceType.IsGenericType &&
-            interfaceType.GetGenericTypeDefinition() == typeof(IQueryable<>))
-          return interfaceType.GetGenericArguments()[0];
-      }
-      return null;
-    }
-
-    private static readonly MethodInfo applyODataMethod = typeof(QueryableResultFilterAttribute).GetMethod(nameof(TransformResult), BindingFlags.Instance | BindingFlags.NonPublic);
-
-    protected abstract object TransformResult<T>(IQueryable<T> source, IQueryCollection query);
+    if (context.HttpContext.Request.Query.TryGetValue("$search", out var values))
+      context.ActionArguments["search"] = values.First();
   }
 
-  public sealed class ODataQueryableAttribute : QueryableResultFilterAttribute
+  public void OnActionExecuted(ActionExecutedContext context)
+  { }
+
+  public override void OnResultExecuting(ResultExecutingContext context)
   {
-    protected override object TransformResult<T>(IQueryable<T> source, IQueryCollection query)
+    // First check if we have a result and if all is good
+    if (context.Result is not ObjectResult result ||
+        result.Value is not IQueryable ||             // Quick bail-out as IQueryable<T> implements IQueryable
+        result.StatusCode is (< 200 or >= 300))       // Only HTTP 2xx range means success, Caution: null is possible (means 200 by default)
+      return;
+
+    var type = FindIQueryableOf(result.Value);
+    if (type == null) return; // Might be IQueryable but not IQueryable<T>
+
+    var method = applyODataMethod.MakeGenericMethod(type);
+    result.Value = method.Invoke(this, new[] { result.Value, context.HttpContext.Request.Query });
+  }
+
+  private Type FindIQueryableOf(object target)
+  {
+    foreach (var interfaceType in target.GetType().GetInterfaces())
     {
-      var value = source.ODataSelect(query, out var count);
-      return count < 0 ?
-        new SortedList<string, object> { ["value"] = value } :
-        new SortedList<string, object> { ["@odata.count"] = count, ["value"] = value };
+      if (interfaceType.IsGenericType &&
+          interfaceType.GetGenericTypeDefinition() == typeof(IQueryable<>))
+        return interfaceType.GetGenericArguments()[0];
     }
+    return null;
+  }
+
+  private static readonly MethodInfo applyODataMethod = typeof(QueryableResultFilterAttribute).GetMethod(nameof(TransformResult), BindingFlags.Instance | BindingFlags.NonPublic);
+
+  protected abstract object TransformResult<T>(IQueryable<T> source, IQueryCollection query);
+}
+
+public sealed class ODataQueryableAttribute : QueryableResultFilterAttribute
+{
+  protected override object TransformResult<T>(IQueryable<T> source, IQueryCollection query)
+  {
+    var value = source.ODataSelect(query, out var count);
+    return count < 0 ?
+      new SortedList<string, object> { ["value"] = value } :
+      new SortedList<string, object> { ["@odata.count"] = count, ["value"] = value };
+  }
+}
+
+public static class ODataQueryableOptions
+{
+  internal static Dictionary<string, FunctionMapper> GlobalFunctions = new(StringComparer.OrdinalIgnoreCase);
+
+  public static bool TryRegisterFunction(string name, Func<Expression[], Expression> mapper, params Type[] argTypes)
+  {
+    if (!name.Contains('.')) throw new ArgumentException("Function name must contain a dot (.)", nameof(name));
+
+    return GlobalFunctions.TryAdd(name, new FunctionMapper(name, mapper, argTypes.Length > 0 ? argTypes : null));
+  }
+
+  public static void RegisterFunction(string name, Func<Expression[], Expression> mapper, params Type[] argTypes)
+  {
+    TryRegisterFunction(name, mapper, argTypes);
   }
 }

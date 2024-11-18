@@ -40,8 +40,8 @@ namespace ODataQuery.Parsers
 
     public static readonly Parser<char, Func<Node, Node>> Not =
       Try(    // Try -> amiguous with expressions that start with 'n'
-        String("not")    
-          .Before(RWS)      
+        String("not")
+          .Before(RWS)
           .WithResult<Func<Node, Node>>(x => new NotNode(x))
       );
 
@@ -59,9 +59,10 @@ namespace ODataQuery.Parsers
       ExpressionParser.Build(
         x => OneOf(
           x.BetweenParen(),
-          Try(In),          // Try -> ambiguous with later parsers because left-hand side may start with any expression
-          Try(Comparison),  // Try -> ambiguous with BoolFunctionCall because "contains(text, 'a') eq true" is valid as well as just "contains(text, 'a')"
-          BoolFunctionCall
+          Try(In),                // Try -> ambiguous with later parsers because left-hand side may start with any expression
+          Try(Comparison),        // Try -> ambiguous with BoolFunctionCall because "contains(text, 'a') eq true" is valid as well as just "contains(text, 'a')"
+          Try(BoolFunctionCall),  // Try -> ambiguous with CustomFunction because they both start with an identifier
+          CustomFunction          // Should return a bool...
         ),
         new [] {
           Operator.PrefixChainable(Not),

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 2.1.0 - 2024-11-18
+### Added
+- Support for registering custom functions
+
 ## 2.0.0 - 2024-06-19
 ### Breaking change
 - Lowest .net target is 6.0

@@ -108,7 +108,7 @@ This library implements a subset of OData 4.0.1.
 Only `$filter`, `$orderby`, `$top`, `$skip` and `$count` are supported.
 
 ### Types and Literals
-Supported: Numeric types, `DateTime` and `DateTimeOffset`, `bool`, `string`, enums.
+Supported: Numeric types, `DateOnly`, `DateTime`, `DateTimeOffset`, `bool`, `string`, enums.
 
 Literals:
 - strings delimited with single quotes, double single-quote escape: `'Marc''s house'`
@@ -155,6 +155,13 @@ Type functions:
 
 Geo function:
 - **Not** supported: `geo.distance`, `geo.length`, `geo.intersects`.
+
+**Custom functions** are supported. 
+They must be registered globally with `ODataQueryableOptions.RegisterFunction()` before using them. Registration takes three parameters:
+- `string name`: the name of the function as it appears in the query string. Following OData convention, it must include a namespace, e.g. `my.function`.
+- `Func<Expression[], Expression> mapper`: a delegate that builds the resulting `Expression` from its arguments.
+- `params Type[] argTypes`: an optional list of input argument types. When used, ODataQueryable will automatically add `Convert` expression nodes where required.
+This is useful as conversion are commonly required, e.g. different exact number types, or nullable structs.
 
 ## $filter
 Filter must evaluate to any boolean expression and is applied as `Where`.

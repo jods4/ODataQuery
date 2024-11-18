@@ -5,37 +5,37 @@ namespace ODataQuery.Nodes
 {
   static class StringFunc {
     private static readonly MethodInfo contains = typeof(string).GetMethod(nameof(string.Contains), new[] { typeof(string) });
-    public static FunctionNode Contains(Node @string, Node value) => new FunctionNode(contains, @string, value);
+    public static MethodNode Contains(Node @string, Node value) => new MethodNode(contains, @string, value);
 
     private static readonly MethodInfo startsWith = typeof(string).GetMethod(nameof(string.StartsWith), new[] { typeof(string) });
-    public static FunctionNode StartsWith(Node @string, Node value) => new FunctionNode(startsWith, @string, value);
+    public static MethodNode StartsWith(Node @string, Node value) => new MethodNode(startsWith, @string, value);
 
     private static readonly MethodInfo endsWith = typeof(string).GetMethod(nameof(string.EndsWith), new[] { typeof(string) });
-    public static FunctionNode EndsWith(Node @string, Node value) => new FunctionNode(endsWith, @string, value);
+    public static MethodNode EndsWith(Node @string, Node value) => new MethodNode(endsWith, @string, value);
 
     private static readonly MethodInfo indexOf = typeof(string).GetMethod(nameof(string.IndexOf), new[] { typeof(string) });
-    public static FunctionNode IndexOf(Node @string, Node value) => new FunctionNode(indexOf, @string, value);
+    public static MethodNode IndexOf(Node @string, Node value) => new MethodNode(indexOf, @string, value);
 
     private static readonly MethodInfo length = typeof(string).GetProperty(nameof(string.Length)).GetGetMethod();
     public static PropertyNode Length(Node @string) => new PropertyNode(length, @string);
 
     private static readonly MethodInfo substring1 = typeof(string).GetMethod(nameof(string.Substring), new[] { typeof(int) });
-    public static FunctionNode Substring(Node @string, Node from) => new FunctionNode(substring1, @string, from);
+    public static MethodNode Substring(Node @string, Node from) => new MethodNode(substring1, @string, from);
 
     private static readonly MethodInfo substring2 = typeof(string).GetMethod(nameof(string.Substring), new[] { typeof(int), typeof(int) });
-    public static FunctionNode Substring(Node @string, Node from, Node length) => new FunctionNode(substring2, @string, from, length);
+    public static MethodNode Substring(Node @string, Node from, Node length) => new MethodNode(substring2, @string, from, length);
 
     private static readonly MethodInfo toUpper = typeof(string).GetMethod(nameof(string.ToUpper), Type.EmptyTypes);
-    public static FunctionNode ToUpper(Node @string) => new FunctionNode(toUpper, @string);
+    public static MethodNode ToUpper(Node @string) => new MethodNode(toUpper, @string);
 
     private static readonly MethodInfo toLower = typeof(string).GetMethod(nameof(string.ToLower), Type.EmptyTypes);
-    public static FunctionNode ToLower(Node @string) => new FunctionNode(toLower, @string);
+    public static MethodNode ToLower(Node @string) => new MethodNode(toLower, @string);
 
     private static readonly MethodInfo trim = typeof(string).GetMethod(nameof(string.Trim), Type.EmptyTypes);
-    public static FunctionNode Trim(Node @string) => new FunctionNode(trim, @string);
+    public static MethodNode Trim(Node @string) => new MethodNode(trim, @string);
 
     private static readonly MethodInfo concat = typeof(string).GetMethod(nameof(string.Concat), BindingFlags.Public | BindingFlags.Static, null, new[] { typeof(string), typeof(string) }, null);
-    public static FunctionNode Concat(Node string1, Node string2) => new FunctionNode(concat, null, string1, string2);
+    public static MethodNode Concat(Node string1, Node string2) => new MethodNode(concat, null, string1, string2);
   }
 
   static class DateFunc

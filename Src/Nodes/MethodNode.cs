@@ -4,13 +4,13 @@ using System.Reflection;
 
 namespace ODataQuery.Nodes
 {
-  sealed class FunctionNode : Node
+  sealed class MethodNode : Node
   {
     private readonly MethodInfo method;
     private readonly Node @this;
     private readonly Node[] args;
 
-    public FunctionNode(MethodInfo method, Node @this, params Node[] args)
+    public MethodNode(MethodInfo method, Node @this, params Node[] args)
     {
       this.method = method;
       this.@this = @this;
