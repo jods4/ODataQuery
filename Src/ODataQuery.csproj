@@ -6,7 +6,7 @@
     <DefaultNamespace>ODataQuery</DefaultNamespace>
 
     <PackageId>ODataQuery</PackageId>
-    <Version>2.1.0.0</Version>
+    <Version>2.1.1.0</Version>
     <Description>Enables server-side filtering, sorting and pagination of any IQueryable&lt;T&gt; using OData syntax and without needing an EDM model.</Description>
     <Authors>jods4</Authors>
     <RepositoryUrl>https://github.com/jods4/ODataQuery</RepositoryUrl>

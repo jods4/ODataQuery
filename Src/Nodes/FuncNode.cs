@@ -8,36 +8,26 @@ sealed class FunctionMapper(string name, Func<Expression[], Expression> mapper, 
 {
   public string Name => name;
 
-  private void ConvertTypes(Expression[] args, Type[] types)
+  public Expression Call(Expression instance, Node[] args)
   {
+    var exprs = new Expression[args.Length];
+
     for (int i = 0; i < args.Length; ++i)
     {
-      var type = types[i];
-      if (type != null && args[i].Type != type)
-        args[i] = Expression.Convert(args[i], type);
+      exprs[i] = argTypes?[i] is { } t
+        ? args[i].ToExpression(instance, t)
+        : args[i].ToExpression(instance);
     }
-  }
 
-  internal Expression Call(Expression[] args)
-  {
-    if (argTypes != null)
-      ConvertTypes(args, argTypes);
-    return mapper(args);
+    return mapper(exprs);
   }
 }
 
 sealed class FuncNode(FunctionMapper mapper, params Node[] args) : Node
 {
   public override Expression ToExpression(Expression instance)
-  {
-    var exprs = new Expression[args.Length];
-    for (int i = 0; i < args.Length; ++i)
-      exprs[i] = args[i].ToExpression(instance);
-    return mapper.Call(exprs);
-  }
+    => mapper.Call(instance, args);
 
   public override string ToString()
-  {
-    return $"Func.{mapper.Name}[{string.Join(",", args.Select(a => a.ToString()))}]";
-  }
+    => $"Func.{mapper.Name}[{string.Join(",", args.Select(a => a.ToString()))}]";
 }
